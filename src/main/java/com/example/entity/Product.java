@@ -14,7 +14,7 @@ public class Product {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private int id;
+    private Integer id;
     @NotBlank(message = "Tên không thể để trống.")
     @Size(min = 8, message = "Tên phải dài hơn 8 ký tự.")
     private String name;
@@ -44,11 +44,11 @@ public class Product {
         this.status = status;
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 

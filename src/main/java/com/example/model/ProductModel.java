@@ -10,6 +10,7 @@ import java.util.List;
 public interface ProductModel
         extends PagingAndSortingRepository<Product, Integer> {
 
+
     Page<Product> findProductsByPrice(int price, Pageable pageable);
 
     Page<Product> findProductsByStatus(int status, Pageable pageable);
