@@ -48,7 +48,7 @@ public class ProductEndpoint {
         String[] splittedIds = java.net.URLDecoder.decode(ids, "UTF-8").split(",");
         Integer[] arrayIds = new Integer[splittedIds.length];
         for (int i = 0; i < splittedIds.length; i++) {
-            arrayIds[i] = new Integer(splittedIds[i]);
+            arrayIds[i] = Integer.valueOf(splittedIds[i]);
         }
         Iterable<Product> list = productRepository.findAllById(Arrays.asList(arrayIds));
         for (Product p :
