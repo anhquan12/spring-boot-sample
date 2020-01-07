@@ -20,7 +20,7 @@ public class Product {
     private String name;
     private String imgUrl;
     @Min(1)
-    private int price;
+    private String price;
     private long createdTime;
     private int status; // 1. Đang bán 2. Dừng bán 0. Đã xoá.
 
@@ -28,7 +28,7 @@ public class Product {
         this.status = 1;
     }
 
-    public Product(@NotNull @Size(min = 8) String name, String imgUrl, @Min(1) int price) {
+    public Product(@NotNull @Size(min = 8) String name, String imgUrl, @Min(1) String price) {
         this.name = name;
         this.imgUrl = imgUrl;
         this.price = price;
@@ -68,11 +68,11 @@ public class Product {
         this.imgUrl = imgUrl;
     }
 
-    public int getPrice() {
+    public String getPrice() {
         return price;
     }
 
-    public void setPrice(int price) {
+    public void setPrice(String price) {
         this.price = price;
     }
 

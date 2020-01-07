@@ -1,28 +1,30 @@
 package com.example.endpoint;
 
-import com.example.entity.CustomErrorType;
+import com.example.builder.ProductBuilder;
 import com.example.entity.Product;
-import com.example.model.ProductModel;
+import com.example.repository.ProductRepository;
 import com.example.service.ProductService;
+import com.example.util.PageResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.context.request.async.DeferredResult;
 import org.springframework.web.multipart.MultipartFile;
-import rx.schedulers.Schedulers;
 
 import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
+import java.util.Map;
 
 @RestController
 public class ProductEndpoint {
 
     @Autowired
-    private ProductModel productModel;
+    private ProductRepository productRepository;
 
     @Autowired
     private ProductService productService;
@@ -48,13 +50,36 @@ public class ProductEndpoint {
         for (int i = 0; i < splittedIds.length; i++) {
             arrayIds[i] = new Integer(splittedIds[i]);
         }
-        Iterable<Product> list = productModel.findAllById(Arrays.asList(arrayIds));
+        Iterable<Product> list = productRepository.findAllById(Arrays.asList(arrayIds));
         for (Product p :
                 list) {
             p.setStatus(0);
         }
-        productModel.saveAll(list);
+        productRepository.saveAll(list);
         return new ResponseEntity<Product>(HttpStatus.NO_CONTENT);
+    }
+
+    @GetMapping(value = "get")
+    public Page<Product> getAll(@RequestParam(value = "name", required = false) String name,
+                                    @RequestParam(value = "price", required = false) String price,
+                                    @RequestParam(value = "page", defaultValue = "1") int page,
+                                    @RequestParam(value = "size", defaultValue = "2") int size) {
+        Pageable pageable = PageRequest.of(page-1 , size);
+        Page<Product> result = productRepository.findByNameAndPrice(name, price, pageable);
+        return new PageImpl<>(result.getContent(),pageable, result.getTotalElements());
+        }
+
+    @GetMapping(value = "get2")
+    public PageResponse<Product> getAll(@RequestParam Map<String, String> params,
+                               @RequestParam(value = "page", defaultValue = "1") int page,
+                               @RequestParam(value = "size", defaultValue = "2") int size) {
+        ProductBuilder builder = new ProductBuilder.Builder()
+                        .setName(params.get("name"))
+                        .setPrice(params.get("price"))
+                        .build();
+        Pageable pageable = PageRequest.of(page-1 , size);
+        Page<Product> result = productRepository.findAll2(builder, pageable);
+        return new PageResponse<>(result.getContent(), result.getTotalPages(), result.getTotalElements(), result.getNumber(), result.getSize());
     }
 
     @PostMapping("/file/image")

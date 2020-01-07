@@ -3,7 +3,7 @@ package com.example.controller;
 
 import com.example.entity.Product;
 import com.example.entity.ProductValidator;
-import com.example.model.ProductModel;
+import com.example.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -31,7 +31,7 @@ public class ProductController {
 //    private static final String DOMAIN = "http://localhost:8888";
 
     @Autowired
-    private ProductModel productModel;
+    private ProductRepository productRepository;
 
     @RequestMapping(path = "/product/create", method = RequestMethod.GET)
     public String createProduct(@ModelAttribute Product p) {
@@ -53,13 +53,13 @@ public class ProductController {
             System.err.println(ex.getMessage());
         }
         product.setImgUrl("/uploaded/" + myFile.getOriginalFilename());
-        productModel.save(product);
+        productRepository.save(product);
         return "redirect:/product/list";
     }
 
     @RequestMapping(path = "/product/edit/{id}", method = RequestMethod.GET)
     public String editProduct(int id, Model model) {
-        Optional<Product> optionalProduct = productModel.findById(id);
+        Optional<Product> optionalProduct = productRepository.findById(id);
         if (optionalProduct.isPresent()) {
             model.addAttribute("product", optionalProduct.get());
             return "product-form";
@@ -84,9 +84,9 @@ public class ProductController {
 
     @RequestMapping(path = "/product/delete/{id}", method = RequestMethod.POST)
     public String deleteProduct(int id) {
-        Optional<Product> optionalProduct = productModel.findById(id);
+        Optional<Product> optionalProduct = productRepository.findById(id);
         if (optionalProduct.isPresent()) {
-            productModel.delete(optionalProduct.get());
+            productRepository.delete(optionalProduct.get());
             return "redirect:/product/list";
         } else {
             return "not-found";
@@ -95,7 +95,7 @@ public class ProductController {
 
     @RequestMapping(path = "/product/list", method = RequestMethod.GET)
     public String getListProduct(Model model, @RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "10") int limit) {
-        Page<Product> pagination = productModel.findProductsByStatus(1, PageRequest.of(page - 1, limit));
+        Page<Product> pagination = productRepository.findProductsByStatus(1, PageRequest.of(page - 1, limit));
         model.addAttribute("pagination", pagination);
         model.addAttribute("page", page);
         model.addAttribute("limit", limit);
