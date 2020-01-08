@@ -6,11 +6,11 @@ import org.springframework.data.domain.Page;
 import java.util.List;
 
 public class PageResponse<T> {
-    @JsonProperty("records")
+    @JsonProperty(value = "records")
     private List<T> result;
 
     private int totalPages;
-    private long totalElement;
+    private long totalElements;
     private int page;
     private int size;
 
@@ -18,18 +18,18 @@ public class PageResponse<T> {
 
     public PageResponse(Page<T> page) {
         this.result = page.getContent();
-        this.totalElement = page.getTotalElements();
+        this.totalElements = page.getTotalElements();
         this.totalPages = page.getTotalPages();
-        this.page = page.getNumber() + 1;
+        this.page = page.getNumber();
         this.size = page.getSize();
     }
 
-    public PageResponse(List<T> result, int totalPages, long totalElement, int page, int size) {
+    public PageResponse(List<T> result, int totalPages, long totalElements, int page, int size) {
+        this.result = result;
         this.totalPages = totalPages;
-        this.totalElement = totalElement;
+        this.totalElements = totalElements;
         this.page = page;
         this.size = size;
-        this.result = result;
     }
 
     public static <T> PageResponse<T> create(Page<T> page) {
@@ -44,12 +44,12 @@ public class PageResponse<T> {
         this.totalPages = totalPages;
     }
 
-    public long getTotalElement() {
-        return totalElement;
+    public long getTotalElements() {
+        return totalElements;
     }
 
-    public void setTotalElement(long totalElement) {
-        this.totalElement = totalElement;
+    public void setTotalElements(long totalElements) {
+        this.totalElements = totalElements;
     }
 
     public int getPage() {
